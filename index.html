@@ -43,8 +43,11 @@
 
 function handleOrientation(event) {
   updateFieldIfNotNull('Orientation_a', event.alpha);
+  console.log(typeof event.alpha);
   updateFieldIfNotNull('Orientation_b', event.beta);
+  console.log(typeof event.beta);
   updateFieldIfNotNull('Orientation_g', event.gamma);
+  console.log(typeof event.gamma);
   incrementEventCount();
 }
 
