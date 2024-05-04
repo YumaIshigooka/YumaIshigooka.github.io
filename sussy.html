@@ -1,35 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Recorder</title>
+    <title>Voice Recorder</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        button {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
+        /* Button styles */
+        #recordButton {
+            background-color: green;
+            color: white;
+            padding: 10px 20px;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
-            background-color: green;
-        }
-        #record {
-            background-color: green;
-        }
-        #stop {
-            background-color: red;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
-    <button id="record">Record</button>
+    <!-- Button to record audio -->
+    <button id="recordButton">Record</button>
+
     <script src="script.js"></script>
 </body>
 </html>
