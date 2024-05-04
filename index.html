@@ -11,7 +11,7 @@
       <p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
 
 
-      <h4 style="margin-top:0.75rem;">Orientati</h4>
+      <h4 style="margin-top:0.75rem;">Orientation</h4>
       <ul>
         <li>X-axis (&beta;): <span id="Orientation_b">0</span><span>&deg;</span></li>
         <li>Y-axis (&gamma;): <span id="Orientation_g">0</span><span>&deg;</span></li>
@@ -58,16 +58,13 @@
         gamma: event.gamma
       };
         
-      if (button) {
-        // Update the rotation value
-        hxValsObject.rotation = orientationData;
+      hxValsObject.rotation = orientationData;
   
-        // Convert the JavaScript object back to a JSON string
-        const updatedHxVals = JSON.stringify(hxValsObject);
-  
-        // Set the updated hx-vals attribute back to the button
-        button.setAttribute('hx-vals', updatedHxVals);
-      }
+      // Convert the JavaScript object back to a JSON string
+      const updatedHxVals = JSON.stringify(hxValsObject);
+
+      // Set the updated hx-vals attribute back to the button
+      button.setAttribute('hx-vals', updatedHxVals);
   
       document.getElementById("")
   
@@ -94,7 +91,7 @@
     }
 
     // Use setInterval to call the triggerButtonClick function every 5 seconds (5000 milliseconds)
-    setInterval(triggerButtonClick, 500);
+    setInterval(triggerButtonClick, 50);
   </script>
   </body>
 </html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Recording</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        button {
+            font-size: 24px;
+            padding: 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="recordButton">Start Recording</button>
+
+    <script>
+        let isRecording = false;
+        let mediaRecorder;
+        let audioChunks = [];
+        
+        const recordButton = document.getElementById('recordButton');
+        
+        recordButton.addEventListener('click', async () => {
+            if (!isRecording) {
+                // Start recording
+                await startRecording();
+            } else {
+                // Stop recording and send the audio
+                stopRecordingAndSend();
+            }
+        });
+
+        async function startRecording() {
+            // Get access to the user's microphone
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            
+            // Create a MediaRecorder instance
+            mediaRecorder = new MediaRecorder(stream);
+
+            // Listen for data available (audio chunks) and push them to the array
+            mediaRecorder.addEventListener('dataavailable', event => {
+                audioChunks.push(event.data);
+            });
+
+            // Start recording
+            mediaRecorder.start();
+
+            // Update button text and state
+            recordButton.innerText = 'Stop Recording';
+            isRecording = true;
+        }
+
+        function stopRecordingAndSend() {
+            // Stop the recording
+            mediaRecorder.stop();
+            
+            // Join the audio chunks into a single blob
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+
+            // Create a FormData object to hold the audio data
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'recording.webm');
+
+            // Send the audio data to the server
+            fetch('/start', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Audio sent successfully!');
+                } else {
+                    console.error('Failed to send audio.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+            // Reset the state and button text
+            audioChunks = [];
+            recordButton.innerText = 'Start Recording';
+            isRecording = false;
+        }
+    </script>
+</body>
+
+</html>
