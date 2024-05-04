@@ -1,5 +1,4 @@
 function handleOrientation(event) {
-    updateFieldIfNotNull('Orientation_b_type', "AAAAA");
     updateFieldIfNotNull('Orientation_a', event.alpha);
     updateFieldIfNotNull('Orientation_b', event.beta);
     updateFieldIfNotNull('Orientation_g', event.gamma);
