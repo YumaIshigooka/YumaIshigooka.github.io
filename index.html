@@ -84,29 +84,28 @@
       }
 
       // Check GPS location
+      // Check GPS location
       function check(pos) {
-        if (userId != null) {
-          let hxValsObject = JSON.parse(button.getAttribute('hx-vals'));
-          
-          // Update location in hx-vals
-          const locationData = {
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-          };
-          
-          hxValsObject.location = locationData;
-          button.setAttribute('hx-vals', JSON.stringify(hxValsObject));
-          
-          // Trigger the "sendGPS" event on #location
-          htmx.trigger("#location", "sendGPS", {});
-          
-          // Stop watching if needed (you can add any condition here)
-          if (false) {
-            console.log("Congratulations, you reached the target");
-            navigator.geolocation.clearWatch(id);
+          if (userId != null) {
+              // Parse the current hx-vals attribute value from the button
+              let hxValsObject = JSON.parse(button.getAttribute('hx-vals'));
+
+              // Update location data in hx-vals
+              const locationData = {
+                  latitude: pos.coords.latitude,
+                  longitude: pos.coords.longitude
+              };
+
+              hxValsObject.location = locationData;
+
+              // Convert the updated hx-vals object back to a JSON string and set it as the attribute value
+              button.setAttribute('hx-vals', JSON.stringify(hxValsObject));
+
+              // Trigger the "sendGPS" event on #location to send the updated hx-vals data
+              htmx.trigger("#location", "sendGPS", {});
           }
-        }
       }
+
 
       // Error handler for GPS
       function error(err) {
@@ -116,7 +115,7 @@
       // Automatically click button every 50ms
       setInterval(() => {
         button.click();
-      }, 50);
+      }, 500);
     </script>
   </body>
 </html>
