@@ -1,38 +1,9 @@
 function handleOrientation(event) {
-    // Gather event parameters
-    const data = {
-        alpha: event.alpha,
-        beta: event.beta,
-        gamma: event.gamma
-    };
-    
-    // Send the data via POST request
-    fetch(endpointUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Data sent successfully:', data);
-    })
-    .catch(error => {
-        console.error('Error sending data:', error);
-    });
-    
-    updateFieldIfNotNull('Orientation_a', event.alpha);
-    updateFieldIfNotNull('Orientation_b', event.beta);
-    updateFieldIfNotNull('Orientation_g', event.gamma);
-    incrementEventCount();
+  updateFieldIfNotNull('Orientation_a', event.alpha);
+  updateFieldIfNotNull('Orientation_b', event.beta);
+  updateFieldIfNotNull('Orientation_g', event.gamma);
+  incrementEventCount();
 }
-
 
 function incrementEventCount(){
   let counterElement = document.getElementById("num-observed-events")
@@ -46,68 +17,26 @@ function updateFieldIfNotNull(fieldName, value, precision=10){
 }
 
 function handleMotion(event) {
-    // Gather event parameters
-    const data = {
-        accelerationIncludingGravity: {
-            x: event.accelerationIncludingGravity.x,
-            y: event.accelerationIncludingGravity.y,
-            z: event.accelerationIncludingGravity.z
-        },
-        acceleration: {
-            x: event.acceleration.x,
-            y: event.acceleration.y,
-            z: event.acceleration.z
-        },
-        interval: event.interval,
-        rotationRate: {
-            alpha: event.rotationRate.alpha,
-            beta: event.rotationRate.beta,
-            gamma: event.rotationRate.gamma
-        }
-    };
+  updateFieldIfNotNull('Accelerometer_gx', event.accelerationIncludingGravity.x);
+  updateFieldIfNotNull('Accelerometer_gy', event.accelerationIncludingGravity.y);
+  updateFieldIfNotNull('Accelerometer_gz', event.accelerationIncludingGravity.z);
 
-    // Send the data via POST request
-    fetch(endpointUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Data sent successfully:', data);
-    })
-    .catch(error => {
-        console.error('Error sending data:', error);
-    });
+  updateFieldIfNotNull('Accelerometer_x', event.acceleration.x);
+  updateFieldIfNotNull('Accelerometer_y', event.acceleration.y);
+  updateFieldIfNotNull('Accelerometer_z', event.acceleration.z);
 
-    updateFieldIfNotNull('Accelerometer_gx', event.accelerationIncludingGravity.x);
-    updateFieldIfNotNull('Accelerometer_gy', event.accelerationIncludingGravity.y);
-    updateFieldIfNotNull('Accelerometer_gz', event.accelerationIncludingGravity.z);
+  updateFieldIfNotNull('Accelerometer_i', event.interval, 2);
 
-    updateFieldIfNotNull('Accelerometer_x', event.acceleration.x);
-    updateFieldIfNotNull('Accelerometer_y', event.acceleration.y);
-    updateFieldIfNotNull('Accelerometer_z', event.acceleration.z);
-
-    updateFieldIfNotNull('Accelerometer_i', event.interval, 2);
-
-    updateFieldIfNotNull('Gyroscope_z', event.rotationRate.alpha);
-    updateFieldIfNotNull('Gyroscope_x', event.rotationRate.beta);
-    updateFieldIfNotNull('Gyroscope_y', event.rotationRate.gamma);
-    incrementEventCount();
+  updateFieldIfNotNull('Gyroscope_z', event.rotationRate.alpha);
+  updateFieldIfNotNull('Gyroscope_x', event.rotationRate.beta);
+  updateFieldIfNotNull('Gyroscope_y', event.rotationRate.gamma);
+  incrementEventCount();
 }
-
 
 function playSound() {
     // Get the audio element
     var audio = document.getElementById('sound');
-    console.log("caca");
+    
     // Play the audio
     audio.play();
 }
