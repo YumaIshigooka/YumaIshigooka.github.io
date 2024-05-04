@@ -1,7 +1,7 @@
 function handleOrientation(event) {
-    updateFieldIfNotNull('Orientation_a', Math.round(event.alpha));
-    updateFieldIfNotNull('Orientation_b', Math.round(event.beta));
-    updateFieldIfNotNull('Orientation_g', Math.round(event.gamma));
+    updateFieldIfNotNull('Orientation_a', event.alpha);
+    updateFieldIfNotNull('Orientation_b', event.beta);
+    updateFieldIfNotNull('Orientation_g', event.gamma);
     incrementEventCount();
   }
   
