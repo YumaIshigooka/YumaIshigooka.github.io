@@ -42,7 +42,7 @@ demo_button.onclick = function(e) {
     if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
         DeviceMotionEvent.requestPermission();
     }
-    updateFieldIfNotNull('Accelerometer_i', 19);
+    updateFieldIfNotNull('Orientation_b_type', 19);
     if (is_running){
         window.removeEventListener("devicemotion", handleMotion);
         window.removeEventListener("deviceorientation", handleOrientation);
