@@ -31,7 +31,7 @@
   <li>Z-axis (&alpha;): <span id="Orientation_a">0</span><span>&deg;</span></li>
 </ul>
 
-<h4 style="margin-top:0.75rem;">Type</h4>
+<h4 style="margin-top:0.75rem;">Tipo</h4>
 <ul>
   <li>Que tipo es? <span id="typee">Ni idea</span></li>
 </ul>
@@ -81,7 +81,7 @@ function handleOrientation(event) {
   .catch(error => {
     console.error('Error sending data:', error);
   });
-  
+
   updateFieldIfNotNull('Orientation_a', event.alpha);
   updateFieldIfNotNull('Orientation_b', event.beta);
   updateFieldIfNotNull('Orientation_g', event.gamma);
