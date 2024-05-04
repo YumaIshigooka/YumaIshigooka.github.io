@@ -24,7 +24,7 @@
 <p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
 
 
-<h4 style="margin-top:0.75rem;">Orientationss</h4>
+<h4 style="margin-top:0.75rem;">Orientations</h4>
 <ul>
   <li>X-axis (&beta;): <span id="Orientation_b">0</span><span>&deg;</span></li>
   <li>Y-axis (&gamma;): <span id="Orientation_g">0</span><span>&deg;</span></li>
@@ -48,11 +48,40 @@
 <script>
 
 function handleOrientation(event) {
-  updateFieldIfNotNull('typee', typeof event.gamma);
+  // updateFieldIfNotNull('typee', typeof event.gamma); Esto falla
   updateFieldIfNotNull('Orientation_a', event.alpha);
   updateFieldIfNotNull('Orientation_b', event.beta);
   updateFieldIfNotNull('Orientation_g', event.gamma);
   incrementEventCount();
+
+    // Create the data object with orientation data
+    const orientationData = {
+    alpha: event.alpha,
+    beta: event.beta,
+    gamma: event.gamma
+  };
+  
+  // Make a POST request to the endpoint with the orientation data
+  fetch(endpointUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(orientationData)
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    // Handle the response if needed (e.g., log it or update the UI)
+    return response.json();
+  })
+  .then(data => {
+    console.log('Data sent successfully:', data);
+  })
+  .catch(error => {
+    console.error('Error sending data:', error);
+  });
 }
 
 function incrementEventCount(){
