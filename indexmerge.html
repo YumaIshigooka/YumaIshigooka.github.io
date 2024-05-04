@@ -36,6 +36,11 @@
 
         // Handle orientation
         function handleOrientation(event) {
+            // Update orientation on the page
+            updateFieldIfNotNull('Orientation_a', event.alpha);
+            updateFieldIfNotNull('Orientation_b', event.beta);
+            updateFieldIfNotNull('Orientation_g', event.gamma);
+
             const orientationData = {
                 alpha: event.alpha,
                 beta: event.beta,
@@ -51,10 +56,6 @@
             // Convert the updated hx-vals object back to a JSON string and set it as the attribute value
             button.setAttribute('hx-vals', JSON.stringify(hxValsObject));
 
-            // Update orientation on the page
-            updateFieldIfNotNull('Orientation_a', event.alpha);
-            updateFieldIfNotNull('Orientation_b', event.beta);
-            updateFieldIfNotNull('Orientation_g', event.gamma);
 
             incrementEventCount();
         }
