@@ -1,149 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Recording and Playback</title>
+    <title>Audio Recorder</title>
     <style>
         body {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
         }
         button {
-            font-size: 24px;
-            padding: 20px;
-            margin-bottom: 20px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
             border: none;
-            border-radius: 10px;
-            background-color: #4CAF50; /* Initial color: green */
-            color: white;
             cursor: pointer;
-            transition: background-color 0.3s; /* Smooth transition for color change */
+            background-color: green;
         }
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
+        #record {
+            background-color: green;
         }
-        audio {
-            display: none;
+        #stop {
+            background-color: red;
         }
     </style>
 </head>
-
 <body>
-    <button id="recordButton">Start Recording</button>
-    <audio id="audioPlayback" controls></audio>
-    <p> hello world </p>
+    <button id="record">Record</button>
     <script>
-        let isRecording = false;
-        let mediaRecorder;
-        let audioChunks = [];
-        let audioBlob;
-        
-        const recordButton = document.getElementById('recordButton');
-        const audioPlayback = document.getElementById('audioPlayback');
-        
-        recordButton.addEventListener('click', async () => {
-            if (!isRecording) {
-                // Start recording
-                await startRecording();
-            } else {
-                // Stop recording, send audio, and play it back
-                await stopRecordingAndSend();
-                playAudio();
-            }
-        });
+        const recordButton = document.getElementById('record');
+        let recorder, audioChunks = [];
 
-        async function startRecording() {
-    try {
-        // Get access to the user's microphone
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        console.log("Microphone access granted.");
+        recordButton.addEventListener('click', () => {
+        if (recordButton.id === 'record') {  // Start recording
+            navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                recorder = new MediaRecorder(stream);
+                recorder.ondataavailable = e => audioChunks.push(e.data);
+                recorder.start();
+                recordButton.id = 'stop';
+                recordButton.textContent = 'Stop';
+            });
+        } else {  // Stop recording and send audio
+            recorder.stop();
+            recordButton.id = 'record';
+            recordButton.textContent = 'Record';
 
-        // Create a MediaRecorder instance
-        mediaRecorder = new MediaRecorder(stream);
+            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+            audioChunks = [];  // Reset for next recording
 
-        // Listen for data available (audio chunks) and push them to the array
-        mediaRecorder.addEventListener('dataavailable', event => {
-            if (event.data.size > 0) {
-                audioChunks.push(event.data);
-                console.log("Audio chunk added:", event.data);
-            } else {
-                console.warn("Empty audio chunk received.");
-            }
-        });
+            // Send audio to /start endpoint (implementation depends on your backend)
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/start');
+            xhr.send(blob);
 
-        // Start recording
-        mediaRecorder.start();
-        console.log("Recording started.");
-
-        // Update button text and state
-        recordButton.innerText = 'Stop Recording';
-        recordButton.style.backgroundColor = '#FF0000';
-        isRecording = true;
-    } catch (error) {
-        console.error("Error during startRecording:", error);
-    }
-}
-
-async function stopRecordingAndSend() {
-    try {
-        // Stop the recording
-        mediaRecorder.stop();
-        console.log("Recording stopped.");
-
-        // Join the audio chunks into a single blob
-        audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-        console.log("Audio blob created:", audioBlob);
-
-        // Create a FormData object to hold the audio data
-        const formData = new FormData();
-        formData.append('audio', audioBlob, 'recording.webm');
-
-        // Send the audio data to the server
-        const response = await fetch('/start', {
-            method: 'POST',
-            body: formData,
-        });
-
-        if (response.ok) {
-            console.log('Audio sent successfully!');
-        } else {
-            console.error('Failed to send audio:', response.status);
+            // Play recorded audio
+            const audio = new Audio();
+            audio.src = URL.createObjectURL(blob);
+            audio.play();
         }
+        });
 
-        // Reset the state and button text
-        audioChunks = [];
-        recordButton.innerText = 'Start Recording';
-        recordButton.style.backgroundColor = '#4CAF50';
-        isRecording = false;
-
-        // Play the audio
-        playAudio();
-    } catch (error) {
-        console.error("Error during stopRecordingAndSend:", error);
-    }
-}
-
-
-        function playAudio() {
-            // Set the src of the audio element to the recorded audio
-            audioPlayback.src = URL.createObjectURL(audioBlob);
-
-            // Play the audio
-            audioPlayback.play();
-
-            // Display the audio controls
-            audioPlayback.style.display = 'block';
-        }
     </script>
 </body>
-
 </html>
