@@ -24,13 +24,15 @@
         const button = document.getElementById('startButton');
 
         // Event listeners
-        handleMagnetometer();
         document.body.addEventListener('htmx:afterSwap', function(evt) {
             userId = evt.detail.target.innerHTML;
         });
 
         // Handle orientation
         // Add the Magnetometer API handling
+        let magnetometerData = null;
+        let accelerometerData = null;
+
         function handleMagnetometer() {
             // Check if the Magnetometer API is supported
             if ('Magnetometer' in window) {
@@ -39,33 +41,14 @@
 
                 // Add an event listener for the sensor's readings
                 sensor.addEventListener('reading', () => {
-                    // Obtain magnetic field readings
-                    const magneticFieldX = sensor.x;
-                    const magneticFieldY = sensor.y;
-                    const magneticFieldZ = sensor.z;
-
-                    // Calculate the angle relative to magnetic north
-                    // You can use the atan2 function to calculate the angle
-                    const angle = Math.atan2(magneticFieldY, magneticFieldX) * (180 / Math.PI);
-
-                    // Update rotation data with the calculated angle relative to magnetic north
-                    const compassData = {
-                        alpha: angle, // Angle relative to magnetic north
-                        beta: null,
-                        gamma: null
+                    magnetometerData = {
+                        x: sensor.x,
+                        y: sensor.y,
+                        z: sensor.z
                     };
 
-                    // Parse the current hx-vals attribute value from the button
-                    let hxValsObject = JSON.parse(button.getAttribute('hx-vals'));
-
-                    // Update rotation data in hx-vals
-                    hxValsObject.rotation = compassData;
-
-                    // Convert the updated hx-vals object back to a JSON string and set it as the attribute value
-                    button.setAttribute('hx-vals', JSON.stringify(hxValsObject));
-
-                    // Update the display field for orientation
-                    updateFieldIfNotNull('Orientation_a', angle);
+                    // Calculate heading when both accelerometer and magnetometer data are available
+                    calculateHeading();
                 });
 
                 // Add an error handler for sensor errors
@@ -79,6 +62,76 @@
                 console.log('Magnetometer API is not supported on this browser.');
             }
         }
+
+        function handleAccelerometer() {
+            // Check if the Accelerometer API is supported
+            if ('Accelerometer' in window) {
+                // Create a new instance of the Accelerometer with a specified frequency (e.g., 60 Hz)
+                const sensor = new Accelerometer({ frequency: 60 });
+
+                // Add an event listener for the sensor's readings
+                sensor.addEventListener('reading', () => {
+                    accelerometerData = {
+                        x: sensor.x,
+                        y: sensor.y,
+                        z: sensor.z
+                    };
+
+                    // Calculate heading when both accelerometer and magnetometer data are available
+                    calculateHeading();
+                });
+
+                // Add an error handler for sensor errors
+                sensor.addEventListener('error', (event) => {
+                    console.error(`Accelerometer error: ${event.error}`);
+                });
+
+                // Start the sensor
+                sensor.start();
+            } else {
+                console.log('Accelerometer API is not supported on this browser.');
+            }
+        }
+
+        function calculateHeading() {
+            // Only calculate the heading if both magnetometer and accelerometer data are available
+            if (magnetometerData && accelerometerData) {
+                // Calculate the tilt angles
+                const pitch = Math.atan2(accelerometerData.x, Math.sqrt(accelerometerData.y**2 + accelerometerData.z**2));
+                const roll = Math.atan2(accelerometerData.y, accelerometerData.z);
+
+                // Calculate heading relative to magnetic north using the magnetometer data
+                const magX = magnetometerData.x * Math.cos(pitch) + magnetometerData.y * Math.sin(pitch) * Math.sin(roll) - magnetometerData.z * Math.sin(pitch) * Math.cos(roll);
+                const magY = magnetometerData.y * Math.cos(roll) + magnetometerData.z * Math.sin(roll);
+
+                // Calculate the heading in degrees
+                const heading = Math.atan2(magY, magX) * (180 / Math.PI);
+
+                // Normalize the heading to 0-360 degrees
+                const normalizedHeading = (heading + 360) % 360;
+
+                // Parse the current hx-vals attribute value from the button
+                let hxValsObject = JSON.parse(button.getAttribute('hx-vals'));
+
+                // Update rotation data in hx-vals
+                hxValsObject.rotation = {
+                    alpha: normalizedHeading,
+                    beta: null,
+                    gamma: null
+                };
+
+                // Convert the updated hx-vals object back to a JSON string and set it as the attribute value
+                button.setAttribute('hx-vals', JSON.stringify(hxValsObject));
+
+                // Update the orientation display on the page
+                updateFieldIfNotNull('Orientation_a', normalizedHeading);
+            }
+        }
+
+        // Initialize the magnetometer and accelerometer handling
+        handleMagnetometer();
+        handleAccelerometer();
+
 
 
 
