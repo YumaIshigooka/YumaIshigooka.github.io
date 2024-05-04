@@ -1,5 +1,5 @@
 const recordButton = document.getElementById('record');
-let recorder, latestBlob;
+let recorder, audioChunks = [];
 
 recordButton.addEventListener('click', () => {
   if (recordButton.id === 'record') {  // Start recording
@@ -11,16 +11,13 @@ recordButton.addEventListener('click', () => {
         recordButton.id = 'stop';
         recordButton.textContent = 'Stop';
       });
-  } else {  // Stop recording and send/play audio
+  } else {  // Stop recording and send audio
     recorder.stop();
     recordButton.id = 'record';
     recordButton.textContent = 'Record';
 
     const blob = new Blob(audioChunks, { type: 'audio/webm' });
     audioChunks = [];  // Reset for next recording
-
-    // Update latest recording
-    latestBlob = blob;
 
     // Send audio to /start endpoint (implementation depends on your backend)
     const xhr = new XMLHttpRequest();
@@ -29,7 +26,7 @@ recordButton.addEventListener('click', () => {
 
     // Play recorded audio
     const audio = new Audio();
-    audio.src = URL.createObjectURL(latestBlob);
+    audio.src = URL.createObjectURL(blob);
     audio.play();
   }
 });
