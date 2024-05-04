@@ -29,7 +29,7 @@
         const button = document.getElementById('startButton');
 
         // Event listeners
-        window.addEventListener("deviceorientation", handleOrientation);
+        handleMagnetometer();
         document.body.addEventListener('htmx:afterSwap', function(evt) {
             userId = evt.detail.target.innerHTML;
         });
@@ -143,7 +143,6 @@
         // Automatically click button every 50ms
         setInterval(() => {
             button.click();
-            handleMagnetometer();
         }, 500);
     </script>
 </body>
