@@ -17,7 +17,7 @@ function updateFieldIfNotNull(fieldName, value, precision=10){
 }
 
 function handleMotion(event) {
-    updateFieldIfNotNull('Accelerometer_gx', parseFloat(event.accelerationIncludingGravity.x));
+    updateFieldIfNotNull('Accelerometer_gx', parseInt(event.accelerationIncludingGravity.x, 10));
     updateFieldIfNotNull('Accelerometer_gy', event.accelerationIncludingGravity.y);
     updateFieldIfNotNull('Accelerometer_gz', event.accelerationIncludingGravity.z);
 
