@@ -31,6 +31,12 @@
   <li>Z-axis (&alpha;): <span id="Orientation_a">0</span><span>&deg;</span></li>
 </ul>
 
+<h4 style="margin-top:0.75rem;">Type</h4>
+<ul>
+  <li>X-axis (&beta;): <span id="typee">tipo</span></li>
+</ul>
+
+
 </div>
 </main>
 <footer class="footer">
@@ -43,11 +49,9 @@
 
 function handleOrientation(event) {
   updateFieldIfNotNull('Orientation_a', event.alpha);
-  console.log(typeof event.alpha);
   updateFieldIfNotNull('Orientation_b', event.beta);
-  console.log(typeof event.beta);
   updateFieldIfNotNull('Orientation_g', event.gamma);
-  console.log(typeof event.gamma);
+  updateFieldIfNotNull('typee', typeof event.gamma);
   incrementEventCount();
 }
 
