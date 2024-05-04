@@ -11,7 +11,7 @@ const recordButton = document.getElementById("recordButton");
 recordButton.addEventListener("click", async () => {
     if (!isRecording) {
         // Start recording
-        recordButton.style.backgroundColor = "red";
+        recordButton.style.backgroundColor = rgb(209, 140, 140);
         recordButton.textContent = "Stop";
 
         try {
