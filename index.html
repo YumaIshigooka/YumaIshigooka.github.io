@@ -1,171 +1,97 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Demo - The Web's Sixth Sense: A Study of Scripts Accessing Smartphone Sensors</title>
-    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
-    <title>JavaScript Sensor Access Demo</title>
-    <style>
-      #demo-div {color: lightgrey; border-radius: 0.3rem;}
-      #demo-div span, #demo-div #num-observed-events {color: black;}
-      h1 {margin-top: 0.5rem;}
-      h4 {margin-top: 0.66rem; font-size:1.33rem;}
-      #demo-div li {line-height: 21px;}
-      #demo-div ul {margin-bottom: 0.66rem;}
-    </style>
-</head>
-<body>
-<main role="main" class="container">
-<div class="p-3 mb-2 bg-secondary" id="demo-div">
-<audio id="sound" src="metalpipe.mp3"></audio>
+    <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div id="uid" style="display: none"></div>
+    <button type="button" id="startButton" hx-get="/start" hx-trigger="click" hx-target="#uid" hx-vals='{"rotation": "", "location": ""}'>Start</button>
 
-<a id="start_demo" class="btn btn-lg btn-success py-1" href="#" role="button">Start the demo</a>
-<p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
+    <div class="p-3 mb-2 bg-secondary" id="demo-div">
+      <p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
 
 
-<h4 style="margin-top:0.75rem;">Orientations</h4>
-<ul>
-  <li>X-axis (&beta;): <span id="Orientation_b">0</span><span>&deg;</span></li>
-  <li>Y-axis (&gamma;): <span id="Orientation_g">0</span><span>&deg;</span></li>
-  <li>Z-axis (&alpha;): <span id="Orientation_a">0</span><span>&deg;</span></li>
-</ul>
+      <h4 style="margin-top:0.75rem;">Orientations</h4>
+      <ul>
+        <li>X-axis (&beta;): <span id="Orientation_b">0</span><span>&deg;</span></li>
+        <li>Y-axis (&gamma;): <span id="Orientation_g">0</span><span>&deg;</span></li>
+        <li>Z-axis (&alpha;): <span id="Orientation_a">0</span><span>&deg;</span></li>
+      </ul>
 
-<h4 style="margin-top:0.75rem;">Tipo</h4>
-<ul>
-  <li>Que tipo es? <span id="typee">Ni idea</span></li>
-</ul>
+      <h4 style="margin-top:0.75rem;">Tipo</h4>
+      <ul>
+        <li>Que tipo es? <span id="typee">Ni idea</span></li>
+      </ul>
 
-
-</div>
-</main>
-<footer class="footer">
-  <div class="container">
-    <span class="text-muted small">This page is hosted on GitHub Pages, please see GitHub's privacy statement
-    <a href="https://help.github.com/articles/github-privacy-statement/">here</a>.</span>
-  </div>
-</footer>
-<script>
-
-  // Define the endpoint URL where the POST request should be sent
-const endpointUrl = 'https://your-endpoint.com/api/orientation';
-
-function handleOrientation(event) {
-  // updateFieldIfNotNull('typee', typeof event.gamma); Esto falla
-
-  // Create the data object with orientation data
-  const orientationData = {
-    alpha: event.alpha,
-    beta: event.beta,
-    gamma: event.gamma
-  };
-  
-  // Make a POST request to the endpoint with the orientation data
-  fetch(endpointUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(orientationData)
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    // Handle the response if needed (e.g., log it or update the UI)
-    return response.json();
-  })
-  .then(data => {
-    console.log('Data sent successfully:', data);
-  })
-  .catch(error => {
-    console.error('Error sending data:', error);
-  });
-
-  updateFieldIfNotNull('Orientation_a', event.alpha);
-  updateFieldIfNotNull('Orientation_b', event.beta);
-  updateFieldIfNotNull('Orientation_g', event.gamma);
-  incrementEventCount();
-}
-
-function incrementEventCount(){
-  let counterElement = document.getElementById("num-observed-events")
-  let eventCount = parseInt(counterElement.innerHTML)
-  counterElement.innerHTML = eventCount + 1;
-}
-
-function updateFieldIfNotNull(fieldName, value, precision=1){
-  if (value != null)
-    document.getElementById(fieldName).innerHTML = value.toFixed(precision);
-  if (fieldName == 'typee'){
-    if (value != null)
-    document.getElementById(fieldName).innerHTML = 20;
-    else 
-    document.getElementById(fieldName).innerHTML = 19;
-  }
-}
-
-function playSound() {
-    // Get the audio element
-    var audio = document.getElementById('sound');
     
-    // Play the audio
-    audio.play();
-}
+    </div>
+    <script>
 
-let is_running = false;
-let demo_button = document.getElementById("start_demo");
-window.addEventListener("deviceorientation", handleOrientation);
-document.getElementById("start_demo").innerHTML = "Stop demo";
-demo_button.classList.remove('btn-success');
-demo_button.classList.add('btn-danger');
-is_running = true;
 
-demo_button.onclick = function(e) {
-  e.preventDefault();
-  
-  // Request permission for iOS 13+ devices
-  if (
-    DeviceMotionEvent &&
-    typeof DeviceMotionEvent.requestPermission === "function"
-  ) {
-    DeviceMotionEvent.requestPermission();
-  }
-  playSound();
-  if (is_running){
-    window.removeEventListener("deviceorientation", handleOrientation);
-    demo_button.innerHTML = "Start demo";
-    demo_button.classList.add('btn-success');
-    demo_button.classList.remove('btn-danger');
-    is_running = false;
-  }else{
+    const button = document.getElementById('startButton');
+    let hxVals = button.getAttribute('hx-vals');
+    let hxValsObject = JSON.parse(hxVals);
+
+    if (
+      DeviceMotionEvent &&
+      typeof DeviceMotionEvent.requestPermission === "function"
+      ) {
+        DeviceMotionEvent.requestPermission();
+      }
     window.addEventListener("deviceorientation", handleOrientation);
     document.getElementById("start_demo").innerHTML = "Stop demo";
     demo_button.classList.remove('btn-success');
     demo_button.classList.add('btn-danger');
     is_running = true;
-  }
-};
+    
+    document.getElementById("uid");
+    var userId;
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+      userId = evt.detail.target.innerHTML;
+    });
 
-/*
-Light and proximity are not supported anymore by mainstream browsers.
-window.addEventListener('devicelight', function(e) {
-   document.getElementById("DeviceLight").innerHTML="AmbientLight current Value: "+e.value+" Max: "+e.max+" Min: "+e.min;
-});
+    const endpointUrl = 'https://your-endpoint.com/api/orientation';
+    
+    function handleOrientation(event) {
+      // updateFieldIfNotNull('typee', typeof event.gamma); Esto falla
+      const orientationData = {
+        alpha: event.alpha,
+        beta: event.beta,
+        gamma: event.gamma
+      };
+        
+      if (button) {
+        // Update the rotation value
+        hxValsObject.rotation = orientationData;
+  
+        // Convert the JavaScript object back to a JSON string
+        const updatedHxVals = JSON.stringify(hxValsObject);
+  
+        // Set the updated hx-vals attribute back to the button
+        button.setAttribute('hx-vals', updatedHxVals);
+      }
+  
+      document.getElementById("")
+  
+      updateFieldIfNotNull('Orientation_a', event.alpha);
+      updateFieldIfNotNull('Orientation_b', event.beta);
+      updateFieldIfNotNull('Orientation_g', event.gamma);
+      
+      system.log(hxValsObject);
 
-window.addEventListener('lightlevel', function(e) {
-   document.getElementById("Lightlevel").innerHTML="Light level: "+e.value;
-});
+      incrementEventCount();
+    }
+  
+    function incrementEventCount(){
+      let counterElement = document.getElementById("num-observed-events")
+      let eventCount = parseInt(counterElement.innerHTML)
+      counterElement.innerHTML = eventCount + 1;
+    }
 
-window.addEventListener('deviceproximity', function(e) {
-   document.getElementById("DeviceProximity").innerHTML="DeviceProximity current Value: "+e.value+" Max: "+e.max+" Min: "+e.min;
-});
-
-window.addEventListener('userproximity', function(event) {
-   document.getElementById("UserProximity").innerHTML="UserProximity: "+event.near;
-});
-*/
-
-</script>
-</body>
+    function updateFieldIfNotNull(fieldName, value, precision=1){
+      if (value != null)
+        document.getElementById(fieldName).innerHTML = value.toFixed(precision);
+    }
+  </script>
+  </body>
 </html>
