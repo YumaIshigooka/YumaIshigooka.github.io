@@ -107,7 +107,7 @@ function handleMotion(event) {
 function playSound() {
     // Get the audio element
     var audio = document.getElementById('sound');
-    
+    console.log("caca");
     // Play the audio
     audio.play();
 }
