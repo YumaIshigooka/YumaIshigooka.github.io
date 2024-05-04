@@ -33,7 +33,7 @@
 
 <h4 style="margin-top:0.75rem;">Type</h4>
 <ul>
-  <li>X-axis (&beta;): <span id="typee">tipo</span></li>
+  <li>Que tipo es? <span id="typee">Ni idea</span></li>
 </ul>
 
 
@@ -48,10 +48,10 @@
 <script>
 
 function handleOrientation(event) {
+  updateFieldIfNotNull('typee', typeof event.gamma);
   updateFieldIfNotNull('Orientation_a', event.alpha);
   updateFieldIfNotNull('Orientation_b', event.beta);
   updateFieldIfNotNull('Orientation_g', event.gamma);
-  updateFieldIfNotNull('typee', typeof event.gamma);
   incrementEventCount();
 }
 
@@ -66,9 +66,9 @@ function updateFieldIfNotNull(fieldName, value, precision=1){
     document.getElementById(fieldName).innerHTML = value.toFixed(precision);
   if (fieldName == 'typee'){
     if (value != null)
-    document.getElementById(fieldName).innerHTML = 1;
+    document.getElementById(fieldName).innerHTML = 20;
     else 
-    document.getElementById(fieldName).innerHTML = -1;
+    document.getElementById(fieldName).innerHTML = 19;
   }
 }
 
