@@ -24,7 +24,7 @@
 <p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
 
 
-<h4 style="margin-top:0.75rem;">Orientation</h4>
+<h4 style="margin-top:0.75rem;">Orientations</h4>
 <ul>
   <li>X-axis (&beta;): <span id="Orientation_b">0</span><span>&deg;</span></li>
   <li>Y-axis (&gamma;): <span id="Orientation_g">0</span><span>&deg;</span></li>
@@ -61,9 +61,11 @@ function incrementEventCount(){
   counterElement.innerHTML = eventCount + 1;
 }
 
-function updateFieldIfNotNull(fieldName, value, precision=10){
+function updateFieldIfNotNull(fieldName, value, precision=1){
   if (value != null)
     document.getElementById(fieldName).innerHTML = value.toFixed(precision);
+  else 
+    document.getElementById(fieldName).innerHTML = -1;
 }
 
 function playSound() {
