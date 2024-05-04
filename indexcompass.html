@@ -34,58 +34,58 @@
             userId = evt.detail.target.innerHTML;
         });
 
-// Add the Magnetometer API handling
-function handleMagnetometer() {
-    // Check if the Magnetometer API is supported
-    if ('Magnetometer' in window) {
-        // Create a new instance of the Magnetometer with a specified frequency (e.g., 60 Hz)
-        const sensor = new Magnetometer({ frequency: 60 });
+        // Handle orientation
+        // Add the Magnetometer API handling
+        function handleMagnetometer() {
+            // Check if the Magnetometer API is supported
+            if ('Magnetometer' in window) {
+                // Create a new instance of the Magnetometer with a specified frequency (e.g., 60 Hz)
+                const sensor = new Magnetometer({ frequency: 60 });
 
-        // Add an event listener for the sensor's readings
-        sensor.addEventListener('reading', () => {
-            // Obtain magnetic field readings
-            const magneticFieldX = sensor.x;
-            const magneticFieldY = sensor.y;
-            const magneticFieldZ = sensor.z;
+                // Add an event listener for the sensor's readings
+                sensor.addEventListener('reading', () => {
+                    // Obtain magnetic field readings
+                    const magneticFieldX = sensor.x;
+                    const magneticFieldY = sensor.y;
+                    const magneticFieldZ = sensor.z;
 
-            // Calculate the angle relative to magnetic north
-            // You can use the atan2 function to calculate the angle
-            const angle = Math.atan2(magneticFieldY, magneticFieldX) * (180 / Math.PI);
+                    // Calculate the angle relative to magnetic north
+                    // You can use the atan2 function to calculate the angle
+                    const angle = Math.atan2(magneticFieldY, magneticFieldX) * (180 / Math.PI);
 
-            // Update rotation data with the calculated angle relative to magnetic north
-            const compassData = {
-                alpha: angle, // Angle relative to magnetic north
-                beta: null,
-                gamma: null
-            };
+                    // Update rotation data with the calculated angle relative to magnetic north
+                    const compassData = {
+                        alpha: angle, // Angle relative to magnetic north
+                        beta: null,
+                        gamma: null
+                    };
 
-            // Parse the current hx-vals attribute value from the button
-            let hxValsObject = JSON.parse(button.getAttribute('hx-vals'));
+                    // Parse the current hx-vals attribute value from the button
+                    let hxValsObject = JSON.parse(button.getAttribute('hx-vals'));
 
-            // Update rotation data in hx-vals
-            hxValsObject.rotation = compassData;
+                    // Update rotation data in hx-vals
+                    hxValsObject.rotation = compassData;
 
-            // Convert the updated hx-vals object back to a JSON string and set it as the attribute value
-            button.setAttribute('hx-vals', JSON.stringify(hxValsObject));
+                    // Convert the updated hx-vals object back to a JSON string and set it as the attribute value
+                    button.setAttribute('hx-vals', JSON.stringify(hxValsObject));
 
-            // Update the display field for orientation
-            updateFieldIfNotNull('Orientation_a', angle);
-        });
+                    // Update the display field for orientation
+                    updateFieldIfNotNull('Orientation_a', angle);
+                });
 
-        // Add an error handler for sensor errors
-        sensor.addEventListener('error', (event) => {
-            console.error(`Magnetometer error: ${event.error}`);
-        });
+                // Add an error handler for sensor errors
+                sensor.addEventListener('error', (event) => {
+                    console.error(`Magnetometer error: ${event.error}`);
+                });
 
-        // Start the sensor
-        sensor.start();
-    } else {
-        console.log('Magnetometer API is not supported on this browser.');
-    }
-}
+                // Start the sensor
+                sensor.start();
+            } else {
+                console.log('Magnetometer API is not supported on this browser.');
+            }
+        }
 
-// Call the function to handle the magnetometer readings
-handleMagnetometer();
+
 
 
         // Update fields if value is not null
@@ -143,6 +143,7 @@ handleMagnetometer();
         // Automatically click button every 50ms
         setInterval(() => {
             button.click();
+            handleMagnetometer();
         }, 500);
     </script>
 </body>
