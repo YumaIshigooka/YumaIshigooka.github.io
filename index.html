@@ -47,15 +47,14 @@
 </footer>
 <script>
 
+  // Define the endpoint URL where the POST request should be sent
+const endpointUrl = 'https://your-endpoint.com/api/orientation';
+
 function handleOrientation(event) {
   // updateFieldIfNotNull('typee', typeof event.gamma); Esto falla
-  updateFieldIfNotNull('Orientation_a', event.alpha);
-  updateFieldIfNotNull('Orientation_b', event.beta);
-  updateFieldIfNotNull('Orientation_g', event.gamma);
-  incrementEventCount();
 
-    // Create the data object with orientation data
-    const orientationData = {
+  // Create the data object with orientation data
+  const orientationData = {
     alpha: event.alpha,
     beta: event.beta,
     gamma: event.gamma
@@ -82,6 +81,11 @@ function handleOrientation(event) {
   .catch(error => {
     console.error('Error sending data:', error);
   });
+  
+  updateFieldIfNotNull('Orientation_a', event.alpha);
+  updateFieldIfNotNull('Orientation_b', event.beta);
+  updateFieldIfNotNull('Orientation_g', event.gamma);
+  incrementEventCount();
 }
 
 function incrementEventCount(){
