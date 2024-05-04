@@ -17,7 +17,7 @@ function updateFieldIfNotNull(fieldName, value, precision=10){
 }
 
 function handleMotion(event) {
-    updateFieldIfNotNull('Accelerometer_gx', event.accelerationIncludingGravity.x);
+    updateFieldIfNotNull('Accelerometer_gx', parseFloat(event.accelerationIncludingGravity.x));
     updateFieldIfNotNull('Accelerometer_gy', event.accelerationIncludingGravity.y);
     updateFieldIfNotNull('Accelerometer_gz', event.accelerationIncludingGravity.z);
 
@@ -42,7 +42,7 @@ demo_button.onclick = function(e) {
     if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
         DeviceMotionEvent.requestPermission();
     }
-
+    updateFieldIfNotNull('Accelerometer_i', 19);
     if (is_running){
         window.removeEventListener("devicemotion", handleMotion);
         window.removeEventListener("deviceorientation", handleOrientation);
