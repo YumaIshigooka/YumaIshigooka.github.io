@@ -33,13 +33,12 @@ function handleMotion(event) {
     incrementEventCount();
 }
 
-function playSound(sound) {
+function playSound() {
     // Get the audio element
-    var audio = document.getElementById(sound);
-    
+    const audio = document.getElementById('sound');
     // Play the audio
     audio.play();
-}
+  }
 
 let is_running = false;
 let demo_button = document.getElementById("start_demo");
