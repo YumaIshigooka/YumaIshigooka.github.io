@@ -5,12 +5,12 @@
   </head>
   <body>
     <div id="uid" style="display: none"></div>
-    <button type="button" id="startButton" hx-get="/start" hx-trigger="click" hx-target="#uid" hx-vals='{"rotation": "", "location": ""}'>Start</button>
+    <div id="location" hx-post="/gps" hx-trigger="sendGPS" hx-vals='{"clientId": "", "location": "", "rotation": ""}' style="display: none"></div>
+    <button onclick="startGPS()" type="button" id="startButton" hx-get="/start" hx-trigger="click" hx-target="#uid" hx-vals='{"rotation": "", "location": ""}'>Start</button> 
 
     <div class="p-3 mb-2 bg-secondary" id="demo-div">
       <p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
-
-
+      
       <h4 style="margin-top:0.75rem;">Orientation</h4>
       <ul>
         <li>X-axis (&beta;): <span id="Orientation_b">0</span><span>&deg;</span></li>
@@ -18,80 +18,105 @@
         <li>Z-axis (&alpha;): <span id="Orientation_a">0</span><span>&deg;</span></li>
       </ul>
 
-      <h4 style="margin-top:0.75rem;">Tipo</h4>
-      <ul>
-        <li>Que tipo es? <span id="typee">Ni idea</span></li>
-      </ul>
-
-    
     </div>
+
     <script>
-
-
-    const button = document.getElementById('startButton');
-    let hxVals = button.getAttribute('hx-vals');
-    let hxValsObject = JSON.parse(hxVals);
-
-    if (
-      DeviceMotionEvent &&
-      typeof DeviceMotionEvent.requestPermission === "function"
+      let userId;
+      const button = document.getElementById('startButton');
+      
+      // Check device orientation permissions
+      if (
+        DeviceMotionEvent &&
+        typeof DeviceMotionEvent.requestPermission === "function"
       ) {
         DeviceMotionEvent.requestPermission();
       }
-    window.addEventListener("deviceorientation", handleOrientation);
-    document.getElementById("start_demo").innerHTML = "Stop demo";
-    demo_button.classList.remove('btn-success');
-    demo_button.classList.add('btn-danger');
-    is_running = true;
-    
-    document.getElementById("uid");
-    var userId;
-    document.body.addEventListener('htmx:afterSwap', function(evt) {
-      userId = evt.detail.target.innerHTML;
-    });
-    
-    function handleOrientation(event) {
-      // updateFieldIfNotNull('typee', typeof event.gamma); Esto falla
-      const orientationData = {
-        alpha: event.alpha,
-        beta: event.beta,
-        gamma: event.gamma
-      };
+
+      // Event listeners
+      window.addEventListener("deviceorientation", handleOrientation);
+      document.body.addEventListener('htmx:afterSwap', function(evt) {
+        userId = evt.detail.target.innerHTML;
+      });
+
+      // Handle orientation
+      function handleOrientation(event) {
+        const orientationData = {
+          alpha: event.alpha,
+          beta: event.beta,
+          gamma: event.gamma
+        };
         
-      hxValsObject.rotation = orientationData;
-  
-      // Convert the JavaScript object back to a JSON string
-      const updatedHxVals = JSON.stringify(hxValsObject);
+        // Update rotation in hx-vals
+        let hxValsObject = JSON.parse(button.getAttribute('hx-vals'));
+        hxValsObject.rotation = orientationData;
+        button.setAttribute('hx-vals', JSON.stringify(hxValsObject));
+        
+        // Update orientation on the page
+        updateFieldIfNotNull('Orientation_a', event.alpha);
+        updateFieldIfNotNull('Orientation_b', event.beta);
+        updateFieldIfNotNull('Orientation_g', event.gamma);
 
-      // Set the updated hx-vals attribute back to the button
-      button.setAttribute('hx-vals', updatedHxVals);
-  
-      document.getElementById("")
-  
-      updateFieldIfNotNull('Orientation_a', event.alpha);
-      updateFieldIfNotNull('Orientation_b', event.beta);
-      updateFieldIfNotNull('Orientation_g', event.gamma);
+        incrementEventCount();
+      }
 
-      incrementEventCount();
-    }
-  
-    function incrementEventCount(){
-      let counterElement = document.getElementById("num-observed-events")
-      let eventCount = parseInt(counterElement.innerHTML)
-      counterElement.innerHTML = eventCount + 1;
-    }
+      // Update fields if value is not null
+      function updateFieldIfNotNull(fieldName, value, precision = 1) {
+        if (value != null)
+          document.getElementById(fieldName).innerHTML = value.toFixed(precision);
+      }
 
-    function updateFieldIfNotNull(fieldName, value, precision=1){
-      if (value != null)
-        document.getElementById(fieldName).innerHTML = value.toFixed(precision);
-    }
+      // Increment event count
+      function incrementEventCount() {
+        let counterElement = document.getElementById("num-observed-events");
+        let eventCount = parseInt(counterElement.innerHTML);
+        counterElement.innerHTML = eventCount + 1;
+      }
 
-    function triggerButtonClick() {
+      // Start GPS tracking
+      function startGPS() {
+        if (navigator.geolocation) {
+          navigator.geolocation.watchPosition(check, error, {
+            enableHighAccuracy: false,
+            timeout: 10000,
+            maximumAge: 0,
+          });
+        }
+      }
+
+      // Check GPS location
+      function check(pos) {
+        if (userId != null) {
+          let hxValsObject = JSON.parse(button.getAttribute('hx-vals'));
+          
+          // Update location in hx-vals
+          const locationData = {
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+          };
+          
+          hxValsObject.location = locationData;
+          button.setAttribute('hx-vals', JSON.stringify(hxValsObject));
+          
+          // Trigger the "sendGPS" event on #location
+          htmx.trigger("#location", "sendGPS", {});
+          
+          // Stop watching if needed (you can add any condition here)
+          if (false) {
+            console.log("Congratulations, you reached the target");
+            navigator.geolocation.clearWatch(id);
+          }
+        }
+      }
+
+      // Error handler for GPS
+      function error(err) {
+        console.error(`ERROR(${err.code}): ${err.message}`);
+      }
+      
+      // Automatically click button every 50ms
+      setInterval(() => {
         button.click();
-    }
-
-    // Use setInterval to call the triggerButtonClick function every 5 seconds (5000 milliseconds)
-    setInterval(triggerButtonClick, 50);
-  </script>
+      }, 50);
+    </script>
   </body>
 </html>
