@@ -33,20 +33,11 @@ function handleMotion(event) {
   incrementEventCount();
 }
 
-function playSound() {
-    // Get the audio element
-    var audio = document.getElementById('sound');
-    
-    // Play the audio
-    audio.play();
-}
-
-
 let is_running = false;
 let demo_button = document.getElementById("start_demo");
 demo_button.onclick = function(e) {
   e.preventDefault();
-  playSound();
+  
   // Request permission for iOS 13+ devices
   if (
     DeviceMotionEvent &&
