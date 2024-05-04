@@ -11,7 +11,7 @@
       <p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
 
 
-      <h4 style="margin-top:0.75rem;">Orientations</h4>
+      <h4 style="margin-top:0.75rem;">Orientation</h4>
       <ul>
         <li>X-axis (&beta;): <span id="Orientation_b">0</span><span>&deg;</span></li>
         <li>Y-axis (&gamma;): <span id="Orientation_g">0</span><span>&deg;</span></li>
@@ -75,7 +75,7 @@
       updateFieldIfNotNull('Orientation_b', event.beta);
       updateFieldIfNotNull('Orientation_g', event.gamma);
       
-      // system.log(hxValsObject);
+      system.log(hxValsObject);
 
       incrementEventCount();
     }
