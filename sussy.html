@@ -26,14 +26,20 @@
         #stop {
             background-color: red;
         }
+        #log {
+            margin-top: 20px;
+            font-family: monospace;
+            color: red;
+        }
     </style>
 </head>
 <body>
     <button id="record">Record</button>
-    <p> amogus </p>
+    <p id="log"></p>
     <script>
         const recordButton = document.getElementById('record');
-        let recorder, latestBlob; // Store the latest recording Blob
+        const logElement = document.getElementById('log');
+        let recorder, latestBlob;
 
         recordButton.addEventListener('click', () => {
         if (recordButton.id === 'record') {  // Start recording
@@ -61,13 +67,17 @@
             xhr.open('POST', '/start');
             xhr.send(blob);
 
-            // Play recorded audio
+            // Play recorded audio (with error handling)
             const audio = new Audio();
-            audio.src = URL.createObjectURL(latestBlob);  // Use latestBlob
-            audio.play();
+            audio.src = URL.createObjectURL(latestBlob);
+            audio.play().then(() => {
+            // Audio played successfully
+            logElement.textContent = 'Audio playback started';
+            }).catch(error => {
+            logElement.textContent = 'Error playing audio: ' + error;
+            });
         }
         });
-
 
     </script>
 </body>
