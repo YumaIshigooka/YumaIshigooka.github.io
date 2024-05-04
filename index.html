@@ -1,121 +1,120 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
-  </head>
-  <body>
+</head>
+<body>
     <div id="uid" style="display: none"></div>
-    <div id="location" hx-post="/gps" hx-trigger="sendGPS" hx-vals='{"clientId": "", "location": "", "rotation": ""}' style="display: none"></div>
-    <button onclick="startGPS()" type="button" id="startButton" hx-get="/start" hx-trigger="click" hx-target="#uid" hx-vals='{"rotation": "", "location": ""}'>Start</button> 
+    <div id="location" hx-post="/gps" hx-trigger="sendGPS" hx-vals='{"rotation": {}, "location": {}}' style="display: none"></div>
+    <button onclick="startGPS()" type="button" id="startButton" hx-get="/start" hx-trigger="click" hx-target="#uid" hx-vals='{"rotation": {}, "location": {}}'>Start</button> 
 
     <div class="p-3 mb-2 bg-secondary" id="demo-div">
-      <p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
-      
-      <h4 style="margin-top:0.75rem;">Orientation</h4>
-      <ul>
-        <li>X-axis (&beta;): <span id="Orientation_b">0</span><span>&deg;</span></li>
-        <li>Y-axis (&gamma;): <span id="Orientation_g">0</span><span>&deg;</span></li>
-        <li>Z-axis (&alpha;): <span id="Orientation_a">0</span><span>&deg;</span></li>
-      </ul>
+        <p style="margin-top:1rem;">Num. of datapoints: <span class="badge badge-warning" id="num-observed-events">0</span></p>
+        
+        <h4 style="margin-top:0.75rem;">Orientation</h4>
+        <ul>
+            <li>X-axis (&beta;): <span id="Orientation_b">0</span><span>&deg;</span></li>
+            <li>Y-axis (&gamma;): <span id="Orientation_g">0</span><span>&deg;</span></li>
+            <li>Z-axis (&alpha;): <span id="Orientation_a">0</span><span>&deg;</span></li>
+        </ul>
 
+        <h4 style="margin-top:0.75rem;">Tipo</h4>
+        <ul>
+            <li>Que tipo es? <span id="typee">Ni idea</span></li>
+        </ul>
     </div>
 
     <script>
-      let userId;
-      const button = document.getElementById('startButton');
-      
-      // Check device orientation permissions
-      if (
-        DeviceMotionEvent &&
-        typeof DeviceMotionEvent.requestPermission === "function"
-      ) {
-        DeviceMotionEvent.requestPermission();
-      }
+        let userId;
+        const button = document.getElementById('startButton');
 
-      // Event listeners
-      window.addEventListener("deviceorientation", handleOrientation);
-      document.body.addEventListener('htmx:afterSwap', function(evt) {
-        userId = evt.detail.target.innerHTML;
-      });
+        // Event listeners
+        window.addEventListener("deviceorientation", handleOrientation);
+        document.body.addEventListener('htmx:afterSwap', function(evt) {
+            userId = evt.detail.target.innerHTML;
+        });
 
-      // Handle orientation
-      function handleOrientation(event) {
-        const orientationData = {
-          alpha: event.alpha,
-          beta: event.beta,
-          gamma: event.gamma
-        };
-        
-        // Update rotation in hx-vals
-        let hxValsObject = JSON.parse(button.getAttribute('hx-vals'));
-        hxValsObject.rotation = orientationData;
-        button.setAttribute('hx-vals', JSON.stringify(hxValsObject));
-        
-        // Update orientation on the page
-        updateFieldIfNotNull('Orientation_a', event.alpha);
-        updateFieldIfNotNull('Orientation_b', event.beta);
-        updateFieldIfNotNull('Orientation_g', event.gamma);
+        // Handle orientation
+        function handleOrientation(event) {
+            const orientationData = {
+                alpha: event.alpha,
+                beta: event.beta,
+                gamma: event.gamma
+            };
 
-        incrementEventCount();
-      }
+            // Parse the current hx-vals attribute value from the button
+            let hxValsObject = JSON.parse(button.getAttribute('hx-vals'));
 
-      // Update fields if value is not null
-      function updateFieldIfNotNull(fieldName, value, precision = 1) {
-        if (value != null)
-          document.getElementById(fieldName).innerHTML = value.toFixed(precision);
-      }
+            // Update rotation data in hx-vals
+            hxValsObject.rotation = orientationData;
 
-      // Increment event count
-      function incrementEventCount() {
-        let counterElement = document.getElementById("num-observed-events");
-        let eventCount = parseInt(counterElement.innerHTML);
-        counterElement.innerHTML = eventCount + 1;
-      }
+            // Convert the updated hx-vals object back to a JSON string and set it as the attribute value
+            button.setAttribute('hx-vals', JSON.stringify(hxValsObject));
 
-      // Start GPS tracking
-      function startGPS() {
-        if (navigator.geolocation) {
-          navigator.geolocation.watchPosition(check, error, {
-            enableHighAccuracy: false,
-            timeout: 10000,
-            maximumAge: 0,
-          });
+            // Update orientation on the page
+            updateFieldIfNotNull('Orientation_a', event.alpha);
+            updateFieldIfNotNull('Orientation_b', event.beta);
+            updateFieldIfNotNull('Orientation_g', event.gamma);
+
+            incrementEventCount();
         }
-      }
 
-      // Check GPS location
-      // Check GPS location
-      function check(pos) {
-          if (userId != null) {
-              // Parse the current hx-vals attribute value from the button
-              let hxValsObject = JSON.parse(button.getAttribute('hx-vals'));
+        // Update fields if value is not null
+        function updateFieldIfNotNull(fieldName, value, precision = 1) {
+            if (value !== null) {
+                document.getElementById(fieldName).innerHTML = value.toFixed(precision);
+            }
+        }
 
-              // Update location data in hx-vals
-              const locationData = {
-                  latitude: pos.coords.latitude,
-                  longitude: pos.coords.longitude
-              };
+        // Increment event count
+        function incrementEventCount() {
+            let counterElement = document.getElementById("num-observed-events");
+            let eventCount = parseInt(counterElement.innerHTML);
+            counterElement.innerHTML = eventCount + 1;
+        }
 
-              hxValsObject.location = locationData;
+        // Start GPS tracking
+        function startGPS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(check, error, {
+                    enableHighAccuracy: false,
+                    timeout: 10000,
+                    maximumAge: 0,
+                });
+            }
+        }
 
-              // Convert the updated hx-vals object back to a JSON string and set it as the attribute value
-              button.setAttribute('hx-vals', JSON.stringify(hxValsObject));
+        // Check GPS location
+        function check(pos) {
+            if (userId !== null) {
+                // Parse the current hx-vals attribute value from the button
+                let hxValsObject = JSON.parse(button.getAttribute('hx-vals'));
 
-              // Trigger the "sendGPS" event on #location to send the updated hx-vals data
-              htmx.trigger("#location", "sendGPS", {});
-          }
-      }
+                // Update location data in hx-vals
+                const locationData = {
+                    latitude: pos.coords.latitude,
+                    longitude: pos.coords.longitude
+                };
 
+                hxValsObject.location = locationData;
 
-      // Error handler for GPS
-      function error(err) {
-        console.error(`ERROR(${err.code}): ${err.message}`);
-      }
-      
-      // Automatically click button every 50ms
-      setInterval(() => {
-        button.click();
-      }, 500);
+                // Convert the updated hx-vals object back to a JSON string and set it as the attribute value
+                button.setAttribute('hx-vals', JSON.stringify(hxValsObject));
+
+                // Trigger the "sendGPS" event on #location to send the updated hx-vals data
+                htmx.trigger("#location", "sendGPS", {});
+            }
+        }
+
+        // Error handler for GPS
+        function error(err) {
+            console.error(`ERROR(${err.code}): ${err.message}`);
+        }
+
+        // Automatically click button every 50ms
+        setInterval(() => {
+            button.click();
+        }, 500);
     </script>
-  </body>
+</body>
 </html>
