@@ -1,7 +1,7 @@
 function handleOrientation(event) {
     updateFieldIfNotNull('Orientation_a', round(parseFloat(event.alpha)));
-    updateFieldIfNotNull('Orientation_b', event.beta);
-    updateFieldIfNotNull('Orientation_g', event.gamma);
+    updateFieldIfNotNull('Orientation_b', parseInt(event.beta));
+    updateFieldIfNotNull('Orientation_g', parseInt(event.gamma));
     incrementEventCount();
 }
   
@@ -11,7 +11,7 @@ function incrementEventCount(){
     counterElement.innerHTML = eventCount + 1;
 }
 
-function updateFieldIfNotNull(fieldName, value, precision=10){
+function updateFieldIfNotNull(fieldName, value, precision=1){
     if (value != null)
         document.getElementById(fieldName).innerHTML = value.toFixed(precision);
 }
@@ -33,6 +33,14 @@ function handleMotion(event) {
     incrementEventCount();
 }
 
+function playSound(sound) {
+    // Get the audio element
+    var audio = document.getElementById(sound);
+    
+    // Play the audio
+    audio.play();
+}
+
 let is_running = false;
 let demo_button = document.getElementById("start_demo");
 demo_button.onclick = function(e) {
@@ -50,6 +58,7 @@ demo_button.onclick = function(e) {
         demo_button.classList.add('btn-success');
         demo_button.classList.remove('btn-danger');
         is_running = false;
+        
     } else {
         window.addEventListener("devicemotion", handleMotion);
         window.addEventListener("deviceorientation", handleOrientation);
