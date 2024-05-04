@@ -115,6 +115,12 @@ function playSound() {
 
 let is_running = false;
 let demo_button = document.getElementById("start_demo");
+window.addEventListener("deviceorientation", handleOrientation);
+document.getElementById("start_demo").innerHTML = "Stop demo";
+demo_button.classList.remove('btn-success');
+demo_button.classList.add('btn-danger');
+is_running = true;
+
 demo_button.onclick = function(e) {
   e.preventDefault();
   
