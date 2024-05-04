@@ -1,4 +1,8 @@
 function handleOrientation(event) {
+    console.log('Type of event.alpha:', typeof event.alpha, 'Value:', event.alpha);
+    console.log('Type of event.beta:', typeof event.beta, 'Value:', event.beta);
+    console.log('Type of event.gamma:', typeof event.gamma, 'Value:', event.gamma);
+    updateFieldIfNotNull('Orientation_b', typeof event.beta);
     updateFieldIfNotNull('Orientation_a', event.alpha);
     updateFieldIfNotNull('Orientation_b', event.beta);
     updateFieldIfNotNull('Orientation_g', event.gamma);
