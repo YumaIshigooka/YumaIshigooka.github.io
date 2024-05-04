@@ -38,7 +38,6 @@
     <p id="log"></p>
     <script>
         const recordButton = document.getElementById('record');
-        const logElement = document.getElementById('log');
         let recorder, latestBlob;
 
         recordButton.addEventListener('click', () => {
@@ -67,15 +66,10 @@
             xhr.open('POST', '/start');
             xhr.send(blob);
 
-            // Play recorded audio (with error handling)
+            // Play recorded audio
             const audio = new Audio();
             audio.src = URL.createObjectURL(latestBlob);
-            audio.play().then(() => {
-            // Audio played successfully
-            logElement.textContent = 'Audio playback started';
-            }).catch(error => {
-            logElement.textContent = 'Error playing audio: ' + error;
-            });
+            audio.play();
         }
         });
 
