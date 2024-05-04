@@ -90,6 +90,13 @@
       if (value != null)
         document.getElementById(fieldName).innerHTML = value.toFixed(precision);
     }
+
+    function triggerButtonClick() {
+    button.click();
+}
+
+    // Use setInterval to call the triggerButtonClick function every 5 seconds (5000 milliseconds)
+    setInterval(triggerButtonClick, 500);
   </script>
   </body>
 </html>
