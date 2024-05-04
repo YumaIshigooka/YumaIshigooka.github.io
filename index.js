@@ -1,5 +1,5 @@
 function handleOrientation(event) {
-    updateFieldIfNotNull('Orientation_a', event.alpha);
+    updateFieldIfNotNull('Orientation_a', round(parseFloat(event.alpha)));
     updateFieldIfNotNull('Orientation_b', event.beta);
     updateFieldIfNotNull('Orientation_g', event.gamma);
     incrementEventCount();
@@ -17,7 +17,7 @@ function updateFieldIfNotNull(fieldName, value, precision=10){
 }
 
 function handleMotion(event) {
-    updateFieldIfNotNull('Accelerometer_gx', parseInt(event.accelerationIncludingGravity.x, 10));
+    updateFieldIfNotNull('Accelerometer_gx', event.accelerationIncludingGravity.x);
     updateFieldIfNotNull('Accelerometer_gy', event.accelerationIncludingGravity.y);
     updateFieldIfNotNull('Accelerometer_gz', event.accelerationIncludingGravity.z);
 
