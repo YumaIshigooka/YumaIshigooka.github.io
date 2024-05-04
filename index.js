@@ -33,12 +33,6 @@ function handleMotion(event) {
     incrementEventCount();
 }
 
-function playSound() {
-    // Get the audio element
-    const audio = document.getElementById('sound');
-    // Play the audio
-    audio.play();
-  }
 
 let is_running = false;
 let demo_button = document.getElementById("start_demo");
