@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Compass Angle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Compass Angle</h1>
+    <p>Heading: <span id="heading">0</span>°</p>
+
+    <script>
+        // Function to handle device orientation
+        function handleOrientation(event) {
+            // Get the alpha (compass angle) value from the event
+            const alpha = event.alpha;
+
+            // Display the compass angle
+            const headingElement = document.getElementById('heading');
+            headingElement.textContent = alpha.toFixed(2);
+        }
+
+        // Check if DeviceOrientationEvent is supported
+        if (window.DeviceOrientationEvent) {
+            // Add event listener for device orientation
+            window.addEventListener('deviceorientation', handleOrientation);
+        } else {
+            // Display a message if the device does not support orientation
+            document.body.innerHTML = '<p>Your device does not support compass orientation.</p>';
+        }
+    </script>
+</body>
+</html>
