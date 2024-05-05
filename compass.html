@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Compass Angle</title>
     <style>
@@ -11,10 +10,9 @@
         }
     </style>
 </head>
-
 <body>
     <h1>Compass Angle</h1>
-    <p>Heading relative to North: <span id="heading">0</span>°</p>
+    <p>Heading relative to Magnetic North: <span id="heading">0</span>°</p>
 
     <script>
         // Function to handle device orientation
@@ -22,21 +20,24 @@
             // Get the alpha (compass angle) value from the event
             const alpha = event.alpha;
 
-            // Compass heading relative to magnetic north
-            // alpha is already in degrees
+            // Debugging: print the alpha value to the console
+            console.log("Alpha (compass angle):", alpha);
+
+            // Update the compass angle displayed in the UI
             const headingElement = document.getElementById('heading');
             headingElement.textContent = alpha.toFixed(2);
         }
 
-        // Check if DeviceOrientationEvent is supported
-        if ('DeviceOrientationEvent' in window) {
-            // Add event listener for device orientation
-            window.addEventListener('deviceorientation', handleOrientation);
-        } else {
-            // Display a message if the device does not support orientation
-            document.body.innerHTML = '<p>Your device does not support compass orientation.</p>';
-        }
+        // Add the device orientation event listener when the DOM content is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            if ('DeviceOrientationEvent' in window) {
+                // Add the event listener for device orientation
+                window.addEventListener('deviceorientation', handleOrientation);
+            } else {
+                // Display a message if the device does not support orientation
+                document.body.innerHTML = '<p>Your device does not support compass orientation.</p>';
+            }
+        });
     </script>
 </body>
-
 </html>
