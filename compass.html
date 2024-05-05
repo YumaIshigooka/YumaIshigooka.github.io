@@ -1,43 +1,62 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Compass Angle</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compass Web App</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #ddd;
+        }
+        .compass-container {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 10px solid #333;
+            position: relative;
+        }
+        .compass-dial {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            border-radius: 50%;
+            background-image: linear-gradient(to top, black 0%, black 50%, #ddd 50%, #ddd 100%);
+        }
+        .compass-needle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(0deg); /* Initial rotation */
+            width: 20px;
+            height: 100px;
+            background-color: red;
+        }
+        #heading {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2em;
+            color: #333;
             text-align: center;
-            margin-top: 50px;
         }
     </style>
 </head>
 <body>
-    <h1>Compass Angle</h1>
-    <p>Heading relative to Magnetic North: <span id="heading">0</span>°</p>
-
-    <script>
-        // Function to handle device orientation
-        function handleOrientation(event) {
-            // Get the alpha (compass angle) value from the event
-            const alpha = event.alpha;
-
-            // Debugging: print the alpha value to the console
-            console.log("Alpha (compass angle):", alpha);
-
-            // Update the compass angle displayed in the UI
-            const headingElement = document.getElementById('heading');
-            headingElement.textContent = alpha.toFixed(2);
-        }
-
-        // Add the device orientation event listener when the DOM content is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            if ('DeviceOrientationEvent' in window) {
-                // Add the event listener for device orientation
-                window.addEventListener('deviceorientation', handleOrientation);
-            } else {
-                // Display a message if the device does not support orientation
-                document.body.innerHTML = '<p>Your device does not support compass orientation.</p>';
-            }
-        });
-    </script>
+    <div class="compass-container">
+        <div class="compass-dial"></div>
+        <div class="compass-needle"></div>
+    </div>
+    <p id="heading">Waiting for compass data...</p>
+    <script src="compass.js"></script>
 </body>
 </html>
