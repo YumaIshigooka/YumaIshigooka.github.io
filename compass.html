@@ -1,62 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compass Web App</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #ddd;
-        }
-        .compass-container {
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            border: 10px solid #333;
-            position: relative;
-        }
-        .compass-dial {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            height: 80%;
-            border-radius: 50%;
-            background-image: linear-gradient(to top, black 0%, black 50%, #ddd 50%, #ddd 100%);
-        }
-        .compass-needle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(0deg); /* Initial rotation */
-            width: 20px;
-            height: 100px;
-            background-color: red;
-        }
-        #heading {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 2em;
-            color: #333;
-            text-align: center;
-        }
-    </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+    <title>Compass</title>
+	<meta name="author" content="Maciej Jaros">
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="compass.css">
 </head>
-<body>
-    <div class="compass-container">
-        <div class="compass-dial"></div>
-        <div class="compass-needle"></div>
-    </div>
-    <p id="heading">Waiting for compass data...</p>
-    <script src="compass.js"></script>
+<body lang="en">
+	<div id="info">
+
+	</div>
+	<div class="compass">
+		<img src="css/images/compass.svg" alt="compass">
+	</div>
+
+	<script type="text/javascript">
+		function runCompass(compassImage, infoElement) {
+			this.compass = new CompassInBrowser();
+			if (!this.compass.available) {
+				infoElement.innerHTML = "Sorry, compass is not available in your browser.";
+				return;
+			}
+
+			this.compass.start();
+			if (this.compass.inCalibration) {
+				infoElement.innerHTML = "Please rotate your device clockwise.";
+			}
+			this.compass.onCalibrationFinalization = function(){
+				infoElement.innerHTML = "Now we're cookin'";
+			};
+			this.compass.onFalsePositiveDetected = function(){
+				infoElement.innerHTML = "Sorry, compass seem not to be available in your browser.";
+			};
+			this.compass.onAngleChange = function(alpha){
+				// This works for any image when using: http://code.google.com/p/jqueryrotate/
+				$(compassImage).rotate(-alpha);
+				infoElement.innerHTML = Math.round(alpha).toString();
+			};
+		}
+
+		$img = $('.compass img');
+		info = document.getElementById('info');
+		controller = new runCompass($img[0], info);
+				
+		rescaleImage($img);
+		function rescaleImage($img){
+			var $container = $img.parent();
+			var w = $container.width();
+			var h = $(window).height() - ($container.position()).top;
+			var diagonal = w < h ? w : h;
+			//var size = diagonal / 1.41421357;	// if image does not fit inside a circle consider larger margin
+			var size = diagonal * 0.9;
+			size = Math.floor(size);
+			$img
+				.attr('width', size)
+				.attr('height', size)
+			;
+		}
+		$(window).resize(function(){
+			rescaleImage($img);
+		});
+	</script>
 </body>
 </html>

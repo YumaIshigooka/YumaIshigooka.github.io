@@ -1,11 +1,18 @@
 const compassNeedle = document.querySelector(".compass-needle");
 const compassHeadingText = document.getElementById("heading");
 
+let initialAlpha = null; // Stores initial compass reading
+
 function handleOrientation(event) {
   const alpha = event.alpha; // Compass heading in degrees (0-360)
 
-  // Convert to CSS compatible rotation (0-360deg)
-  const compassRotation = - (alpha - 90); 
+  // Capture initial compass reading on first event
+  if (initialAlpha === null) {
+    initialAlpha = alpha;
+  }
+
+  // Calculate compass rotation with offset based on initial reading
+  const compassRotation = - (alpha - initialAlpha - 90); 
 
   compassNeedle.style.transform = `rotate(${compassRotation}deg)`;
 
