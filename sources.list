@@ -1,0 +1,9 @@
+deb http://old-releases.ubuntu.com/ubuntu/ hardy main restricted
+deb http://old-releases.ubuntu.com/ubuntu/ hardy-updates main restricted
+deb http://old-releases.ubuntu.com/ubuntu/ hardy universe
+deb http://old-releases.ubuntu.com/ubuntu/ hardy-updates universe
+deb http://old-releases.ubuntu.com/ubuntu/ hardy multiverse
+deb http://old-releases.ubuntu.com/ubuntu/ hardy-updates multiverse
+deb http://old-releases.ubuntu.com/ubuntu/ hardy-security main restricted
+deb http://old-releases.ubuntu.com/ubuntu/ hardy-security universe
+deb http://old-releases.ubuntu.com/ubuntu/ hardy-security multiverse
